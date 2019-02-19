@@ -1,0 +1,14 @@
+{
+    "python.pythonPath": "/home/neeraj/miniconda3/envs/dl/bin/python",
+    "path-intellisense.showHiddenFiles": true,
+    "python.linting.pylintEnabled": true,
+    "python.autoComplete.addBrackets": true,
+    "python.dataScience.exportWithOutputEnabled": true,
+    "python.terminal.executeInFileDir": true,
+    "workbench.colorTheme": "Shades of Purple",
+    // "workbench.colorCustomizations": {
+    //     "activityBar.background": "#e25555",
+    //     "titleBar.activeBackground": "#d14a4a",
+    //     "titleBar.activeForeground": "#5f1f1f"
+    // }
+}
