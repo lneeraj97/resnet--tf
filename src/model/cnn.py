@@ -107,27 +107,7 @@ class CNN:
 
         self.model = Sequential()
 
-        self.model.add(Conv2D(32, self.kernel_size,
-                              input_shape=self.input_shape,
-                              use_bias=True, strides=1, padding='same'))
-        self.model.add(ReLU())
-        self.model.add(MaxPooling2D(pool_size=self.pool_size, strides=2))
-        self.model.add(ReLU())
-        self.model.add(Dropout(rate=self.dropout_rate))
 
-        self.model.add(Conv2D(32, self.kernel_size, strides=1, use_bias=True,
-                              padding='same'))
-        self.model.add(ReLU())
-        self.model.add(MaxPooling2D(pool_size=self.pool_size, strides=2))
-        self.model.add(ReLU())
-        self.model.add(Dropout(rate=self.dropout_rate))
-
-        self.model.add(Conv2D(32, self.kernel_size, strides=1,
-                              use_bias=True, padding='same'))
-        self.model.add(ReLU())
-        self.model.add(MaxPooling2D(pool_size=self.pool_size, strides=2))
-        self.model.add(ReLU())
-        self.model.add(Dropout(rate=self.dropout_rate))
 
         self.model.add(Flatten())
 
