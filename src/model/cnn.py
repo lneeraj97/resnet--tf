@@ -7,6 +7,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ModelCheckpoint
 from keras.utils import plot_model
 from contextlib import redirect_stdout
+from keras.applications import InceptionResNetV2
+from keras.models import Model
 
 
 class CNN:
@@ -105,21 +107,9 @@ class CNN:
 
     def create_model(self):
 
-        self.model = Sequential()
-
-
-
-        self.model.add(Flatten())
-
-        self.model.add(Dense(units=256))
-        self.model.add(ReLU())
-        self.model.add(Dropout(rate=self.dropout_rate))
-        self.model.add(Dense(units=128))
-        self.model.add(ReLU())
-        self.model.add(Dropout(rate=self.dropout_rate))
-        self.model.add(Dense(units=self.args.get('units'),
-                             activation=self.args.get('activation')))
-        # self.model.add(Softmax(axis=-1))
+        model = InceptionResNetV2(
+            include_top=False, weights='imagenet', input_shape=self.input_shape)
+        print(model.summary())
 
     def train_model(self):
         self.model.compile(optimizer=self.optimizer,
