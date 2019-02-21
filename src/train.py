@@ -19,6 +19,7 @@ is_binary = False
 classes = 4
 optimizer = 'adam'
 dropout_rate = 0.25
+history_file = '../model/history.csv'
 kwargs = {
     'validation_steps': validation_steps,
     'weights_file': weights_file,
@@ -37,11 +38,12 @@ kwargs = {
     'batch_size': batch_size,
     'steps_per_epoch': steps_per_epoch,
     'optimizer': optimizer,
-    'dropout_rate': dropout_rate
+    'dropout_rate': dropout_rate,
+    'history_file': history_file
 }
 
 
 classifier = cnn.CNN(**kwargs)
 classifier.create_model()
 # classifier.train_model()
-# classifier.export_model()
+classifier.export_model()

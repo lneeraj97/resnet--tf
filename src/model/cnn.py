@@ -1,6 +1,7 @@
+import os
 from keras import layers, models
-from keras.models import Sequential
-from keras.layers import (Conv2D, MaxPooling2D, ReLU, Dropout,
+from keras.models import Sequential, load_model
+from keras.layers import (Conv2D, MaxPooling2D, ReLU, Dropout, Input,
                           Flatten, Dense, LeakyReLU, Softmax,
                           BatchNormalization)
 from keras.preprocessing.image import ImageDataGenerator
@@ -9,11 +10,12 @@ from keras.utils import plot_model
 from contextlib import redirect_stdout
 from keras.applications import InceptionResNetV2
 from keras.models import Model
+import pandas as pd
 
 
 class CNN:
 
-    def __init__(self,
+    def __init__(self, history_file=None,
                  validation_steps=None, weights_file=None, json_file=None,
                  text_file=None, image_file=None, test_path=None,
                  train_path=None, input_shape=(512, 512), dropout_rate=0.3,
@@ -104,12 +106,28 @@ class CNN:
         self.train_path = train_path
         self.test_path = test_path
         self.target_size = target_size
+        self.history_file = history_file
+        self.history = [0, 0]
 
     def create_model(self):
+        # if os.path.isfile(self.weights_file):
+        #     print("Saved model found")
+        #     model = load_model(self.weights_file)
+        # else:
+        inputs = Input(shape=self.input_shape)
+        base_model = InceptionResNetV2(
+            include_top=False, weights='imagenet', input_tensor=inputs, input_shape=self.input_shape, pooling='avg', classes=self.args.get('units'))
+        for layer in base_model.layers[:-10]:
+            layer.trainable = False
 
-        model = InceptionResNetV2(
-            include_top=False, weights='imagenet', input_shape=self.input_shape)
-        print(model.summary())
+        t = base_model(inputs)
+        # flatten = Flatten(name='Flatten')(t)
+        outputs = Dense(self.args.get('units'),
+                        activation=self.args.get('activation'))(t)
+
+        self.model = Model(inputs=inputs, outputs=outputs)
+
+        # print(self.model.summary())
 
     def train_model(self):
         self.model.compile(optimizer=self.optimizer,
@@ -119,7 +137,9 @@ class CNN:
                                      monitor="loss",
                                      verbose=1,
                                      save_best_only=True,
-                                     mode="min")
+                                     mode="min",
+                                     save_weights_only=False
+                                     )
         callbacks_list = [checkpoint]
 
         train_datagen = ImageDataGenerator(
@@ -129,7 +149,7 @@ class CNN:
             zoom_range=0.5,
             horizontal_flip=True,
             vertical_flip=True,
-            rotation_range=180,
+            rotation_range=90,
         )
 
         train_set = train_datagen.flow_from_directory(
@@ -147,7 +167,7 @@ class CNN:
             subset="validation",
         )
 
-        self.model.fit_generator(
+        self.history = self.model.fit_generator(
             train_set,
             steps_per_epoch=self.steps_per_epoch,
             epochs=self.epochs,
@@ -166,3 +186,6 @@ class CNN:
         model_json = self.model.to_json()
         with open(self.json_file, "w") as json_file:
             json_file.write(model_json)
+        with open(self.history_file,"w"):
+            df = pd.DataFrame(self.history)
+            df.to_csv(self.history_file)
