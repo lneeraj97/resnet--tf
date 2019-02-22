@@ -45,5 +45,5 @@ kwargs = {
 
 classifier = cnn.CNN(**kwargs)
 classifier.create_model()
-# classifier.train_model()
+classifier.train_model()
 classifier.export_model()
