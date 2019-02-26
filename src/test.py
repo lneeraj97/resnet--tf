@@ -4,12 +4,12 @@ from model import cnn  # Import required functions
 train_path = "../data/4ary/train/"
 test_path = "../data/4ary/test/"
 json_file = "../model/model.json"
-weights_file = "../model/model_sgd.h5"
+weights_file = "../model/model.h5"
 text_file = "../model/model.txt"
 image_file = "../model/model.png"
 epochs = 300
 batch_size = 16
-steps_per_epoch = 4100//batch_size + 1
+steps_per_epoch = 1000
 validation_steps = 22
 pool_size = (2, 2)
 kernel_size = (3, 3)
@@ -17,9 +17,9 @@ input_shape = (224, 224, 3)
 target_size = (224, 224)
 is_binary = False
 classes = 4
-optimizer = 'sgd'
+optimizer = 'adam'
 dropout_rate = 0.25
-history_file = '../model/history_sgd.csv'
+history_file = '../model/history.csv'
 kwargs = {
     'validation_steps': validation_steps,
     'weights_file': weights_file,
@@ -42,7 +42,8 @@ kwargs = {
     'history_file': history_file
 }
 
+
 classifier = cnn.CNN(**kwargs)
-classifier.create_model()
-classifier.train_model()
-classifier.export_model()
+
+classifier.evaluate_model()
+# classifier.export_model()

@@ -112,13 +112,16 @@ class CNN:
     def create_model(self):
         # if os.path.isfile(self.weights_file):
         #     print("Saved model found")
-        #     model = load_model(self.weights_file)
+        #     self.model = load_model(self.weights_file)
+        #     print("Saved model loaded successfully")
         # else:
         inputs = Input(shape=self.input_shape)
         base_model = InceptionResNetV2(
             include_top=False, weights='imagenet', input_tensor=inputs, input_shape=self.input_shape, pooling='avg', classes=self.args.get('units'))
-        for layer in base_model.layers[:-10]:
+        for layer in base_model.layers[:-20]:
             layer.trainable = False
+        for layer in base_model.layers[-20:]:
+            layer.trainable = True
 
         t = base_model(inputs)
         # flatten = Flatten(name='Flatten')(t)
@@ -167,15 +170,44 @@ class CNN:
             subset="validation",
         )
 
-        self.history = self.model.fit_generator(
-            train_set,
-            steps_per_epoch=self.steps_per_epoch,
+        self.history_train = self.model.fit_generator(
+            train_set, steps_per_epoch=self.steps_per_epoch,
             epochs=self.epochs,
             validation_steps=self.validation_steps,
             validation_data=val_set,
             callbacks=callbacks_list,
         )
         print("Everything's done")
+
+    def evaluate_model(self):
+        if os.path.isfile(self.weights_file):
+            print("Saved model found")
+            self.model = load_model(self.weights_file)
+            print("Saved model loaded successfully")
+            self.model.compile(optimizer=self.optimizer,
+                               loss=self.args.get('loss'),
+                               metrics=["accuracy"])
+            test_datagen = ImageDataGenerator(
+                rescale=1./255,
+                shear_range=0.5,
+                zoom_range=0.5,
+                horizontal_flip=True,
+                vertical_flip=True,
+                rotation_range=90,
+            )
+            test_set = test_datagen.flow_from_directory(
+                self.test_path,
+                target_size=self.target_size,
+                batch_size=1,
+                class_mode=self.args.get('class_mode'),
+            )
+            self.history_test = self.model.predict_generator(
+                test_set, steps=self.steps_per_epoch)
+
+            print(self.history_test)
+
+        else:
+            print("Model not found")
 
     def export_model(self):
         with open(self.text_file, "w") as my_file:
@@ -186,6 +218,6 @@ class CNN:
         model_json = self.model.to_json()
         with open(self.json_file, "w") as json_file:
             json_file.write(model_json)
-        with open(self.history_file,"w"):
+        with open(self.history_file, "w"):
             df = pd.DataFrame(self.history)
             df.to_csv(self.history_file)

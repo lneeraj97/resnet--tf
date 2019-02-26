@@ -4,7 +4,8 @@ import imutils
 import numpy as np
 from tqdm import tqdm
 
-paths = ['../../data/messidor/test/', '../../data/messidor/train/']
+paths = ['../../data/4ary/test/',
+         '../../data/4ary/train/']
 
 
 def get_save_path(image_path, modifier):
@@ -41,7 +42,7 @@ def rotate_image(image, image_path, number_of_rotations):
 def horizontal_flip(image, image_path):
     # image = cv.imread(image_path)
     flipped = image[:, ::-1, :]
-    save_path = get_save_path(image_path, 'hflip')
+    save_path = get_save_path(image_path, 'flip_h)')
     #show_image(image, flipped)
     cv.imwrite(save_path, flipped)
 
@@ -49,7 +50,7 @@ def horizontal_flip(image, image_path):
 def vertical_flip(image, image_path):
     # image = cv.imread(image_path)
     flipped = image[::-1, :, :]
-    save_path = get_save_path(image_path, 'vflip')
+    save_path = get_save_path(image_path, 'flip_v')
     #show_image(image, flipped)
     cv.imwrite(save_path, flipped)
 
@@ -57,7 +58,7 @@ def vertical_flip(image, image_path):
 def vertical_horizontal_flip(image, image_path):
     # image = cv.imread(image_path)
     flipped = image[::-1, ::-1, :]
-    save_path = get_save_path(image_path, 'vhflip')
+    save_path = get_save_path(image_path, 'flip_vh')
     # show_image(image, flipped)
     cv.imwrite(save_path, flipped)
 
@@ -72,7 +73,7 @@ def data_augmentation(image_path, number_of_rotations):
 
 
 def process_folder(PATH):
-    pid = PATH.split('/')[4]
+    pid = PATH.split('/')[-1]
     rotations = {'0': 0, '1': 6, '2': 3, '3': 3}
     number_of_rotations = rotations.get(pid)
     for image in tqdm(os.listdir(PATH)):
@@ -84,7 +85,7 @@ def process_folder(PATH):
 def augment_dataset(PATH):
     for folder in os.listdir(PATH):
         process_folder(os.path.join(PATH, folder))
-        # print(folder)
+        # print(os.path.join(PATH, folder).split('/')[-1])
 
 
 for path in paths:
