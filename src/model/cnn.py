@@ -11,6 +11,7 @@ from contextlib import redirect_stdout
 from keras.applications import InceptionResNetV2
 from keras.models import Model
 import pandas as pd
+import keras_metrics
 
 
 class CNN:
@@ -84,14 +85,20 @@ class CNN:
                 'class_mode': 'binary',
                 'units': 1,
                 'activation': 'sigmoid',
-                'loss': 'binary_crossentropy'
+                'loss': 'binary_crossentropy',
+                'precision': 'keras_metrics.binary_precision',
+                'recall': 'keras_metrics.binary_recall',
+                'f1_score': 'keras_metrics.binary_f1_score'
             }
         else:
             self.args = {
                 'class_mode': 'categorical',
                 'units': classes,
                 'activation': 'softmax',
-                'loss': 'categorical_crossentropy'
+                'loss': 'categorical_crossentropy',
+                'precision': 'keras_metrics.categorical_precision',
+                'recall': 'keras_metrics.categorical_recall',
+                'f1_score': 'keras_metrics.categorical_f1_score'
             }
         self.pool_size = pool_size
         self.kernel_size = kernel_size
@@ -118,9 +125,9 @@ class CNN:
         inputs = Input(shape=self.input_shape)
         base_model = InceptionResNetV2(
             include_top=False, weights='imagenet', input_tensor=inputs, input_shape=self.input_shape, pooling='avg', classes=self.args.get('units'))
-        for layer in base_model.layers[:-20]:
-            layer.trainable = False
-        for layer in base_model.layers[-20:]:
+        # for layer in base_model.layers[:-20]:
+        #     layer.trainable = False
+        for layer in base_model.layers:
             layer.trainable = True
 
         t = base_model(inputs)
@@ -135,7 +142,7 @@ class CNN:
     def train_model(self):
         self.model.compile(optimizer=self.optimizer,
                            loss=self.args.get('loss'),
-                           metrics=["accuracy"])
+                           metrics=[self.args.get('recall'), self.args.get('precision'), self.args.get('f1_score')])
         checkpoint = ModelCheckpoint(self.weights_file,
                                      monitor="loss",
                                      verbose=1,
