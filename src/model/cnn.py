@@ -86,9 +86,9 @@ class CNN:
                 'units': 1,
                 'activation': 'sigmoid',
                 'loss': 'binary_crossentropy',
-                'precision': 'keras_metrics.binary_precision',
-                'recall': 'keras_metrics.binary_recall',
-                'f1_score': 'keras_metrics.binary_f1_score'
+                'precision': 'keras_metrics.binary_precision()',
+                'recall': 'keras_metrics.binary_recall()',
+                'f1_score': 'keras_metrics.binary_f1_score()'
             }
         else:
             self.args = {
@@ -96,9 +96,9 @@ class CNN:
                 'units': classes,
                 'activation': 'softmax',
                 'loss': 'categorical_crossentropy',
-                'precision': 'keras_metrics.categorical_precision',
-                'recall': 'keras_metrics.categorical_recall',
-                'f1_score': 'keras_metrics.categorical_f1_score'
+                'precision': 'keras_metrics.categorical_precision()',
+                'recall': 'keras_metrics.categorical_recall()',
+                'f1_score': 'keras_metrics.categorical_f1_score()'
             }
         self.pool_size = pool_size
         self.kernel_size = kernel_size

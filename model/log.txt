@@ -1,8 +1,8 @@
-2019-03-15 12:27:00.870077: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
-2019-03-15 12:27:00.884147: I tensorflow/core/common_runtime/process_util.cc:69] Creating new thread pool with default inter op setting: 2. Tune using inter_op_parallelism_threads for best performance.
+2019-03-15 12:27:58.275191: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2019-03-15 12:27:58.280051: I tensorflow/core/common_runtime/process_util.cc:69] Creating new thread pool with default inter op setting: 2. Tune using inter_op_parallelism_threads for best performance.
 Using TensorFlow backend.
 Traceback (most recent call last):
-  File "train.py", line 47, in <module>
+  File "train_binary.py", line 46, in <module>
     classifier.train_model()
   File "/home/neeraj/Desktop/resnet-tf/src/model/cnn.py", line 145, in train_model
     metrics=[self.args.get('recall'), self.args.get('precision'), self.args.get('f1_score')])
@@ -16,4 +16,4 @@ Traceback (most recent call last):
     printable_module_name='metric function')
   File "/home/neeraj/miniconda3/envs/dl/lib/python3.6/site-packages/keras/utils/generic_utils.py", line 165, in deserialize_keras_object
     ':' + function_name)
-ValueError: Unknown metric function:keras_metrics.categorical_recall
+ValueError: Unknown metric function:keras_metrics.binary_recall
