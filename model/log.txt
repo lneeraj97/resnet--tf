@@ -1,19 +1,11 @@
-2019-03-15 12:27:58.275191: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
-2019-03-15 12:27:58.280051: I tensorflow/core/common_runtime/process_util.cc:69] Creating new thread pool with default inter op setting: 2. Tune using inter_op_parallelism_threads for best performance.
-Using TensorFlow backend.
-Traceback (most recent call last):
-  File "train_binary.py", line 46, in <module>
-    classifier.train_model()
-  File "/home/neeraj/Desktop/resnet-tf/src/model/cnn.py", line 145, in train_model
-    metrics=[self.args.get('recall'), self.args.get('precision'), self.args.get('f1_score')])
-  File "/home/neeraj/miniconda3/envs/dl/lib/python3.6/site-packages/keras/engine/training.py", line 451, in compile
-    handle_metrics(output_metrics)
-  File "/home/neeraj/miniconda3/envs/dl/lib/python3.6/site-packages/keras/engine/training.py", line 408, in handle_metrics
-    metric_fn = metrics_module.get(metric)
-  File "/home/neeraj/miniconda3/envs/dl/lib/python3.6/site-packages/keras/metrics.py", line 78, in get
-    return deserialize(str(identifier))
-  File "/home/neeraj/miniconda3/envs/dl/lib/python3.6/site-packages/keras/metrics.py", line 70, in deserialize
-    printable_module_name='metric function')
-  File "/home/neeraj/miniconda3/envs/dl/lib/python3.6/site-packages/keras/utils/generic_utils.py", line 165, in deserialize_keras_object
-    ':' + function_name)
-ValueError: Unknown metric function:keras_metrics.binary_recall
+2019-03-15 12:39:23.065387: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2019-03-15 12:39:23.070991: I tensorflow/core/common_runtime/process_util.cc:69] Creating new thread pool with default inter op setting: 2. Tune using inter_op_parallelism_threads for best performance.
+Found 832 images belonging to 4 classes.
+Found 208 images belonging to 4 classes.
+Epoch 1/1000
+
+  1/129 [..............................] - ETA: 1:55:26 - loss: 1.3812 - recall: 0.0526 - precision: 1.0000
+  2/129 [..............................] - ETA: 1:10:02 - loss: 1.2783 - recall: 0.0294 - precision: 1.0000
+  3/129 [..............................] - ETA: 54:32 - loss: 1.2666 - recall: 0.0600 - precision: 0.6000  
+  4/129 [..............................] - ETA: 46:45 - loss: 1.2531 - recall: 0.1618 - precision: 0.6471
+  5/129 [>.............................] - ETA: 41:49 - loss: 1.2755 - recall: 0.1807 - precision: 0.5000

@@ -142,7 +142,7 @@ class CNN:
     def train_model(self):
         self.model.compile(optimizer=self.optimizer,
                            loss=self.args.get('loss'),
-                           metrics=[self.args.get('recall'), self.args.get('precision'), self.args.get('f1_score')])
+                           metrics=[keras_metrics.recall(), keras_metrics.precision()])
         checkpoint = ModelCheckpoint(self.weights_file,
                                      monitor="loss",
                                      verbose=1,
