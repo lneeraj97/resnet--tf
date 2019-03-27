@@ -4,7 +4,7 @@ from model import cnn  # Import required functions
 train_path = "../data/4ary/train/"
 test_path = "../data/4ary/test/"
 json_file = "../model/model.json"
-weights_file = "../model/model_sgd.h5"
+weights_file = "../model/model.h5"
 text_file = "../model/model.txt"
 image_file = "../model/model.png"
 epochs = 300
@@ -17,7 +17,7 @@ input_shape = (224, 224, 3)
 target_size = (224, 224)
 is_binary = False
 classes = 4
-optimizer = 'sgd'
+optimizer = 'adam'
 dropout_rate = 0.25
 history_file = '../model/history_sgd.csv'
 kwargs = {

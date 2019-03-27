@@ -12,6 +12,7 @@ from keras.applications import InceptionResNetV2
 from keras.models import Model
 import pandas as pd
 import keras_metrics
+import numpy as np
 
 
 class CNN:
@@ -86,9 +87,9 @@ class CNN:
                 'units': 1,
                 'activation': 'sigmoid',
                 'loss': 'binary_crossentropy',
-                'precision': 'keras_metrics.binary_precision()',
-                'recall': 'keras_metrics.binary_recall()',
-                'f1_score': 'keras_metrics.binary_f1_score()'
+                'precision': 'keras_metrics.precision()',
+                'recall': 'keras_metrics.recall()',
+                'f1_score': 'keras_metrics.f1_score()'
             }
         else:
             self.args = {
@@ -96,9 +97,9 @@ class CNN:
                 'units': classes,
                 'activation': 'softmax',
                 'loss': 'categorical_crossentropy',
-                'precision': 'keras_metrics.categorical_precision()',
-                'recall': 'keras_metrics.categorical_recall()',
-                'f1_score': 'keras_metrics.categorical_f1_score()'
+                'precision': 'keras_metrics.precision()',
+                'recall': 'keras_metrics.recall()',
+                'f1_score': 'keras_metrics.f1_score()'
             }
         self.pool_size = pool_size
         self.kernel_size = kernel_size
@@ -117,25 +118,26 @@ class CNN:
         self.history = [0, 0]
 
     def create_model(self):
-        # if os.path.isfile(self.weights_file):
-        #     print("Saved model found")
-        #     self.model = load_model(self.weights_file)
-        #     print("Saved model loaded successfully")
-        # else:
-        inputs = Input(shape=self.input_shape)
-        base_model = InceptionResNetV2(
-            include_top=False, weights='imagenet', input_tensor=inputs, input_shape=self.input_shape, pooling='avg', classes=self.args.get('units'))
-        # for layer in base_model.layers[:-20]:
-        #     layer.trainable = False
-        for layer in base_model.layers:
-            layer.trainable = True
+        if os.path.isfile(self.weights_file):
+            print("Saved model found")
+            self.model = load_model(self.weights_file, custom_objects={'binary_recall': keras_metrics.recall(), 'binary_precision': keras_metrics.precision(
+            ), 'categorical_recall': keras_metrics.recall(), 'categorical_precision': keras_metrics.precision(), 'recall': keras_metrics.recall(), 'precision': keras_metrics.precision()})
+            print("Saved model loaded successfully")
+        else:
+            inputs = Input(shape=self.input_shape)
+            base_model = InceptionResNetV2(
+                include_top=False, weights='imagenet', input_tensor=inputs, input_shape=self.input_shape, pooling='avg', classes=self.args.get('units'))
+            # for layer in base_model.layers[:-20]:
+            #     layer.trainable = False
+            for layer in base_model.layers:
+                layer.trainable = True
 
-        t = base_model(inputs)
-        # flatten = Flatten(name='Flatten')(t)
-        outputs = Dense(self.args.get('units'),
-                        activation=self.args.get('activation'))(t)
+            t = base_model(inputs)
+            # flatten = Flatten(name='Flatten')(t)
+            outputs = Dense(self.args.get('units'),
+                            activation=self.args.get('activation'))(t)
 
-        self.model = Model(inputs=inputs, outputs=outputs)
+            self.model = Model(inputs=inputs, outputs=outputs)
 
         # print(self.model.summary())
 
@@ -189,11 +191,12 @@ class CNN:
     def evaluate_model(self):
         if os.path.isfile(self.weights_file):
             print("Saved model found")
-            self.model = load_model(self.weights_file)
+            self.model = load_model(self.weights_file, custom_objects={'binary_recall': keras_metrics.recall(), 'binary_precision': keras_metrics.precision(
+            ), 'categorical_recall': keras_metrics.recall(), 'categorical_precision': keras_metrics.precision(), 'recall': keras_metrics.recall(), 'precision': keras_metrics.precision()})
             print("Saved model loaded successfully")
             self.model.compile(optimizer=self.optimizer,
                                loss=self.args.get('loss'),
-                               metrics=["accuracy"])
+                               metrics=["accuracy", keras_metrics.recall(), keras_metrics.precision()])
             test_datagen = ImageDataGenerator(
                 rescale=1./255,
                 shear_range=0.5,
@@ -208,13 +211,34 @@ class CNN:
                 batch_size=1,
                 class_mode=self.args.get('class_mode'),
             )
-            self.history_test = self.model.predict_generator(
+            self.history_test = self.model.evaluate_generator(
                 test_set, steps=self.steps_per_epoch)
 
-            print(self.history_test)
+            print(self.model.metrics_names, self.history_test)
 
         else:
             print("Model not found")
+
+    def get_class_predictions(self):
+        if os.path.isfile(self.weights_file):
+            print("Saved model found")
+            self.model = load_model(self.weights_file, custom_objects={'binary_recall': keras_metrics.recall(), 'binary_precision': keras_metrics.precision(
+            ), 'categorical_recall': keras_metrics.recall(), 'categorical_precision': keras_metrics.precision(), 'recall': keras_metrics.recall(), 'precision': keras_metrics.precision()})
+            print("Saved model loaded successfully")
+            self.model.compile(optimizer=self.optimizer,
+                               loss=self.args.get('loss'),
+                               metrics=["accuracy", keras_metrics.recall(), keras_metrics.precision()])
+        for folder in os.listdir(self.test_path):
+            actual_class = folder
+            for image in os.listdir(os.path.join(self.test_path, folder)):
+                predictions = self.model.predict(
+                    image, batch_size=1, verbose=1)
+                print(predictions)
+                predicted_class = predictions.index(max(predictions))
+                confusion_matrix = pd.DataFrame(
+                    columns=['actual_class', 'predicted_class'])
+                confusion_matrix.append([actual_class, predicted_class])
+        print(confusion_matrix)
 
     def export_model(self):
         with open(self.text_file, "w") as my_file:

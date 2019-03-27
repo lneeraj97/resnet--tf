@@ -2,7 +2,7 @@
 from model import cnn  # Import required functions
 
 train_path = "../data/4ary/train/"
-test_path = "../data/4ary/test/"
+test_path = "../data/test/"
 json_file = "../model/model.json"
 weights_file = "../model/model.h5"
 text_file = "../model/model.txt"
@@ -17,7 +17,7 @@ input_shape = (224, 224, 3)
 target_size = (224, 224)
 is_binary = False
 classes = 4
-optimizer = 'adam'
+optimizer = 'sgd'
 dropout_rate = 0.25
 history_file = '../model/history.csv'
 kwargs = {
@@ -46,4 +46,5 @@ kwargs = {
 classifier = cnn.CNN(**kwargs)
 
 classifier.evaluate_model()
+# classifier.get_class_predictions()
 # classifier.export_model()

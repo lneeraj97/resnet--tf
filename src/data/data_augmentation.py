@@ -4,8 +4,8 @@ import imutils
 import numpy as np
 from tqdm import tqdm
 
-paths = ['../../data/4ary/test/',
-         '../../data/4ary/train/']
+paths = ['../../data/4ary/test/']
+#  '../../data/4ary/train/']
 
 
 def get_save_path(image_path, modifier):
@@ -84,8 +84,8 @@ def process_folder(PATH):
 
 def augment_dataset(PATH):
     for folder in os.listdir(PATH):
-        process_folder(os.path.join(PATH, folder))
-        # print(os.path.join(PATH, folder).split('/')[-1])
+        # process_folder(os.path.join(PATH, folder))
+        print(os.path.join(PATH, folder).split('/')[-1])
 
 
 for path in paths:

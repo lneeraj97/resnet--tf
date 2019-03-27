@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "train_binary.py", line 2, in <module>
+    from model import cnn  # Import required functions
+  File "/home/neeraj/Desktop/resnet-tf/src/model/cnn.py", line 125
+    inputs = Input(shape=self.input_shape)
+                                         ^
+IndentationError: unindent does not match any outer indentation level
